@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+
+    <!-- 保存背景 -->
+    <color name="btn_bg_pressed">#3985FF</color>
+    <color name="btn_bg_normal">#A0BFF0</color>
+    <color name="text_size_color">#ffffff</color>
+
+    <color name="DodgerBlue">#1E90FF</color>
+
+    <color name="color_bg_toolbar">#389FD6</color>
+
+    <color name="no_color_check_bg">#d6d7d7</color>
+    <color name="color_check_bg">#458ed5</color>
+
+    <color name="text_no_check_bg">#000000</color>
+    <color name="text_check_bg">#FFFFFF</color>
+
+    <color name="colorGrayTertiary">#EEEEEE</color>
+    <color name="colorWhite">#FFFFFF</color>
+
+    <color name="textColorSecondary">#999999</color>
+    <color name="textColorPrimary">#333333</color>
+</resources>

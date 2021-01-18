@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ESC_PrintDemo</string>
+
+    <!-- main Activity -->
+    <string name="btn_printer">ESC 打印</string>
+    <string name="btn_web_printer">Web 打印</string>
+    <string name="btn_buletooth_printer">蓝牙打印</string>
+    <string name="btn_psam">PSAM</string>
+
+    <!-- esc Activity -->
+    <string name="TXT_version">固件版本: </string>
+    <string name="TXT_psamInfo">PSAM信息: </string>
+    <string name="TXT_con">浓度: </string>
+    <string name="TXT_text">文本</string>
+    <string name="TXT_image">图片</string>
+    <string name="TXT_barcode">一维码</string>
+    <string name="TXT_qr">二维码</string>
+    <string name="TXT_mark">黑标检测</string>
+    <string name="TXT_lable">标签测试</string>
+    <string name="TXT_check">打印机自检</string>
+    <string name="TXT_psam1">PSAM卡1</string>
+    <string name="TXT_psam2">PSAM卡2</string>
+    <string name="TXT_html">网页调用测试</string>
+    <string name="TXT_mark_enable">黑标检测开关</string>
+    <string name="TXT_reset">恢复出厂默认</string>
+
+    <!-- toast -->
+    <string name="toast_print_success">打印完成</string>
+    <string name="toast_print_error">打印失败</string>
+    <string name="toast_high_temperature">高温</string>
+    <string name="toast_no_paper">缺纸</string>
+    <string name="toast_check">图高和图宽不能为空</string>
+    <string name="toast_chick">请不要多次点击</string>
+    <string name="toast_mark">请先打开黑标</string>
+    <string name="toast_input_content">内容不能为空</string>
+    <string name="toast_con">浓度不能为空</string>
+
+
+    <string name="rb_open_mark">开</string>
+    <string name="rb_close_mark">关</string>
+
+
+
+    <!-- psam -->
+    <string name="po1">卡1复位</string>
+    <string name="po2">卡2复位</string>
+    <string name="po3">有效</string>
+    <string name="poff">关电</string>
+    <string name="cmd">发送指令</string>
+    <string name="txt_select">当前选择卡：无</string>
+    <string name="txt_active">活动卡1失败，可能卡不存在或发生了一些错误</string>
+    <string name="txt_active2">活动卡2失败，可能卡不存在或发生了一些错误</string>
+    <string name="txt_success">成功获得ATR</string>
+    <string name="txt_select_card1">当前选择卡：Card1</string>
+    <string name="txt_select_card2">当前选择卡：Card2</string>
+    <string name="txt_invalid_char">无效的字符，由HEX编号形成的cmd</string>
+    <string name="txt_invalid_mApdu">由十六进制数形成的mApdu，cmd无效</string>
+    <string name="txt_exec_cmd">exec cmd失败，请重试</string>
+    <string name="txt_success_execute">成功执行cmd</string>
+    <string name="toast_01">请先卡复位</string>
+
+
+    <!-- Bluetooth -->
+    <string name="txt_01">选择一个已配对的打印设备</string>
+    <string name="txt_02">还未配对打印机，去设置</string>
+    <string name="txt_03">测试打印机连接</string>
+    <string name="txt_04">打印</string>
+    <string name="txt_05">小票打印</string>
+    <string name="txt_06">标签打印</string>
+    <string name="txt_07">标签测试</string>
+    <string name="txt_08">蓝牙打印机</string>
+
+    <string name="total_01">配对更多设备</string>
+    <string name="total_02">还未配对打印机，去设置</string>
+    <string name="total_03">请等待当前打印完成</string>
+    <string name="total_05">还未选择打印设备</string>
+    <string name="total_06">连接打印机失败</string>
+    <string name="total_07">成功！</string>
+    <string name="total_08">蓝牙已开启</string>
+    <string name="total_09">蓝牙已关闭</string>
+    <string name="total_10">请在设置-->个性化中打开虚拟蓝牙</string>
+
+    <string name="dialog_01">请稍候..</string>
+    <string name="dialog_02">蓝牙设备未打开,请开启此功能后重试!</string>
+    <string name="dialog_03">提示</string>
+    <string name="dialog_04">确认</string>
+</resources>

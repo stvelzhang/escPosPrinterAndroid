@@ -1,0 +1,87 @@
+<resources>
+    <string name="app_name">ESC_PrintDemo</string>
+
+    <!-- mainActivity -->
+    <string name="btn_buletooth_printer">Bluetooth printing</string>
+    <string name="btn_psam">PSAM</string>
+    <string name="btn_printer">ESC Printer</string>
+    <string name="btn_web_printer">Web Printer</string>
+
+    <!-- esc Activity -->
+    <string name="TXT_version">Firmware version: </string>
+    <string name="TXT_psamInfo">PSAM information: </string>
+    <string name="TXT_con">浓度: </string>
+    <string name="TXT_text">Text</string>
+    <string name="TXT_image">Image</string>
+    <string name="TXT_barcode">Barcode</string>
+    <string name="TXT_qr">QR</string>
+    <string name="TXT_mark">Black marker</string>
+    <string name="TXT_lable">Label test</string>
+    <string name="TXT_check">Printer self-test</string>
+    <string name="TXT_psam1">PSAM卡1</string>
+    <string name="TXT_psam2">PSAM卡2</string>
+    <string name="TXT_html">Web page calling test</string>
+    <string name="TXT_mark_enable">Black mark detection switch</string>
+    <string name="TXT_reset">Reset printer</string>
+
+    <!-- toast -->
+    <string name="toast_print_success">Print success</string>
+    <string name="toast_print_error">Print failed</string>
+    <string name="toast_high_temperature">high temperature</string>
+    <string name="toast_no_paper">No paper</string>
+    <string name="toast_check">Please Check picture</string>
+    <string name="toast_chick">Please do not click multiple times</string>
+    <string name="toast_mark">Please open the black mark first</string>
+    <string name="toast_input_content">The content can not be blank</string>
+    <string name="toast_con">Concentration cannot be empty</string>
+
+    <string name="rb_open_mark">Open</string>
+    <string name="rb_close_mark">Close</string>
+
+
+
+    <!-- psam -->
+    <string name="po1">PowerON Card1</string>
+    <string name="po2">PowerON Card2</string>
+    <string name="po3">valid</string>
+    <string name="poff">PowerOFF</string>
+    <string name="cmd">Send CMD</string>
+    <string name="txt_select">Current select card: None</string>
+    <string name="txt_active">active card 1 failed, maybe card is not present or some error occured</string>
+    <string name="txt_active2">active card 2 failed, maybe card is not present or some error occured</string>
+    <string name="txt_success">success get ATR</string>
+    <string name="txt_select_card1">Current select card: Card1</string>
+    <string name="txt_select_card2">Current select card: Card2</string>
+    <string name="txt_invalid_char">Invalid char, cmd shoud formed by HEX number</string>
+    <string name="txt_invalid_mApdu">Invalid mApdu, cmd shoud formed by HEX number</string>
+    <string name="txt_exec_cmd">exec cmd failed, please retry</string>
+    <string name="txt_success_execute">success execute cmd</string>
+    <string name="toast_01">Please reset the card first</string>
+
+
+    <!-- BluetoothFragment -->
+    <string name="txt_01">Select a paired printing device</string>
+    <string name="txt_02">Have not paired the printer, go to set up</string>
+    <string name="txt_03">Test printer connection</string>
+    <string name="txt_04">print</string>
+    <string name="txt_05">Ticket printing</string>
+    <string name="txt_06">Label printing</string>
+    <string name="txt_07">Label test</string>
+    <string name="txt_08">Bluetooth printer</string>
+
+    <string name="total_01">Pair more devices</string>
+    <string name="total_02">Have not paired the printer, go to set up</string>
+    <string name="total_03">Please wait for the current printing to complete</string>
+    <string name="total_05">No printing device selected</string>
+    <string name="total_06">Failed to connect the printer</string>
+    <string name="total_07">success!</string>
+    <string name="total_08">Bluetooth is on</string>
+    <string name="total_09">Bluetooth is off</string>
+    <string name="total_10">Please turn on Virtual Bluetooth in Settings-->Personalization</string>
+
+    <string name="dialog_01">Please wait..</string>
+    <string name="dialog_02">The Bluetooth device is not turned on, please turn on this function and try again!</string>
+    <string name="dialog_03">prompt</string>
+    <string name="dialog_04">confirm</string>
+
+</resources>

@@ -1,0 +1,212 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.ESCActivity">
+
+
+    <ImageView
+        android:id="@+id/test_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLength="100"
+            android:text="@string/TXT_version"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/TXT_mark_enable" />
+
+    <RadioGroup
+        android:id="@+id/rb_g"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_open_mark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rb_open_mark" />
+
+        <RadioButton
+            android:id="@+id/rb_close_mark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/rb_close_mark" />
+
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/edit_scan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="123456789" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/TXT_con"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/tv_con"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="25-39"
+            android:text="25"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_text"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_selector"
+            android:text="@string/TXT_text"
+            android:textColor="@color/text_size_color"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_image"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_selector"
+            android:text="@string/TXT_image"
+            android:textColor="@color/text_size_color"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_barcode"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_selector"
+            android:text="@string/TXT_barcode"
+            android:textColor="@color/text_size_color"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_qr"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_selector"
+            android:text="@string/TXT_qr"
+            android:textColor="@color/text_size_color"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:id="@+id/btn_position"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_selector"
+            android:text="@string/TXT_mark"
+            android:textColor="@color/text_size_color"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_label"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_selector"
+            android:text="@string/TXT_lable"
+            android:textColor="@color/text_size_color"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_selfTest"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_selector"
+            android:text="@string/TXT_check"
+            android:textColor="@color/text_size_color"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_default"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_selector"
+            android:text="@string/TXT_reset"
+            android:textColor="@color/text_size_color"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

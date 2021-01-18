@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport"content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <link href="css/box.css" rel="stylesheet"/>
+</head>
+
+<body>
+    <script src="js/mui.min.js"></script>
+    <script src="js/StringBuffer.js"></script>
+    <script src="js/Enums.js"></script>
+    <script src="js/printListener.js"></script>
+    <script type="text/javascript">
+
+         function onSaveCallback(src){
+            var base64 = "data:image/jpeg;base64,"+src;
+　　　　　　document.getElementById ("img").src = base64;
+　　　　}
+
+        function print(){
+            Android.getBitmap();
+        }
+
+    </script>
+
+        <div id="content" style="width: 100%;height: 500px;">
+            <img id="img" src=""  onclick=""/>
+        </div>
+        <div style="text-align:center">
+            <button class="bg_print" type="button" onclick="print()">打印</button>
+        </div>
+
+</body>
+
+</html>
