@@ -8,7 +8,7 @@ public class buttonUtils {
 
     private static long lastTime= 0;
     // 两次点击按钮之间的点击间隔不能少于5000毫秒
-    private static final int MIN_CLICK_DELAY_TIME = 2000;
+    private static final int MIN_CLICK_DELAY_TIME = 10;
 
     public static boolean isButtonFastClick() {
         boolean flag = false;

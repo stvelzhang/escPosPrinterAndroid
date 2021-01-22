@@ -10,7 +10,7 @@ package com.example.print_sdk.enums;
  * ALIGN_RIGHT: Right justification
  */
 public enum  ALIGN_MODE {
-    ALIGN_LEFT(0), ALIGN_CENTER(1), ALIGN_RIGHT(2);
+    ALIGN_LEFT(0x00), ALIGN_CENTER(0x01), ALIGN_RIGHT(0x02);
 
     private int iSet;
 

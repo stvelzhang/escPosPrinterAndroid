@@ -1,6 +1,7 @@
 package com.example.esc_printdemo;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -12,6 +13,7 @@ import com.example.print_sdk.SerialManager;
 import com.example.print_sdk.enums.ALIGN_MODE;
 import com.example.print_sdk.enums.BARCODE_1D_TYPE;
 import com.example.print_sdk.enums.MODE_ENLARGE;
+import com.example.print_sdk.enums.UNDERLINE_MODE;
 import com.example.print_sdk.util.BitmapUtils;
 import com.example.print_sdk.util.ByteUtils;
 
@@ -19,6 +21,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by moxiaomo
@@ -31,6 +35,16 @@ public class PrintContract {
 
     private Context mContext;
     private PrintUtil pUtil;
+    private SharedPreferences.Editor mEditor;
+    private String  mConnLevel;
+    private boolean mHeightDouble = false;
+    private boolean mWidthDouble = false;
+    private boolean mTextBold = false;
+    private boolean mUnderLine = false;
+    private boolean mWhiteBlackReverse = false;
+    private boolean mLineHeight = false;
+    private String  mLintHeightValue = "30";
+
 
     public PrintContract() {
     }
@@ -38,16 +52,40 @@ public class PrintContract {
     public PrintContract(Context context, PrintUtil printUtil) {
         this.mContext=context;
         this.pUtil=printUtil;
+        mEditor = mContext.getSharedPreferences("PrintStyleSet", MODE_PRIVATE).edit();
     }
 
 
     public void printInit() {
         try {
             pUtil.printEnableCertificate (true);
-            pUtil.printEnableMark (false);
+            pUtil.printEnableMark (true);
             pUtil.printLanguage (15);
             pUtil.printEncode (3);
             pUtil.getVersion ();
+            SharedPreferences getPrintStyle = mContext.getSharedPreferences("PrintStyleSet", MODE_PRIVATE);
+
+            mConnLevel = getPrintStyle.getString("connLevel", "25");
+            mWidthDouble = getPrintStyle.getString("wdouble", "false").equals("true") ? true: false;
+            mHeightDouble = getPrintStyle.getString("hdouble", "false").equals("true") ? true: false;
+            mUnderLine = getPrintStyle.getString("underline", "false").equals("true") ? true: false;
+            mWhiteBlackReverse = getPrintStyle.getString("reverseBW", "false").equals("true") ? true: false;
+            mTextBold = getPrintStyle.getString("textbold", "false").equals("true") ? true: false;
+            mLineHeight = getPrintStyle.getString("lineHeight", "false").equals("true") ? true: false;
+            mLintHeightValue = getPrintStyle.getString("lineHeightValue", "30");
+
+
+        } catch (IOException e) {
+            e.printStackTrace ();
+        }
+    }
+
+    public void printBarcodeEx(String text) {
+        try {
+            Bitmap bitmap = BitmapUtils.createBarcode (mContext,text,400,100,true,1);
+
+            pUtil.printBarcode2 (bitmap);
+            pUtil.printLine (2);
         } catch (IOException e) {
             e.printStackTrace ();
         }
@@ -57,13 +95,37 @@ public class PrintContract {
         try {
             pUtil.printEnableMark (true);
             pUtil.printState ();
+            pUtil.printAllState();
             pUtil.printStartNumber (number);
-            pUtil.printConcentration (Integer.valueOf (con));
-            pUtil.printAlignment (ALIGN_MODE.ALIGN_CENTER);
+            pUtil.printConcentration (Integer.valueOf (mConnLevel));
+            if (!mWidthDouble && !mHeightDouble) {
+                pUtil.printFontSize(MODE_ENLARGE.NORMAL);
+            }else if(mWidthDouble && mHeightDouble){
+                pUtil.printFontSize (MODE_ENLARGE.HEIGHT_WIDTH_DOUBLE);
+            }else if(!mWidthDouble && mHeightDouble){
+                pUtil.printFontSize (MODE_ENLARGE.HEIGHT_DOUBLE);
+            }else {
+                pUtil.printFontSize (MODE_ENLARGE.WIDTH_DOUBLE);
+            }
 
-            pUtil.printTextBold (true);
+            if(mLineHeight){
+                pUtil.printLineHeightSet(Integer.valueOf(mLintHeightValue));
+            }
+            pUtil.printUnderLine(UNDERLINE_MODE.UNDERLINE_OFF);
+            pUtil.printAlignment (ALIGN_MODE.ALIGN_CENTER);
+            if (mTextBold){
+                pUtil.printTextBold(true);
+            }else {
+                pUtil.printTextBold(false);
+            }
+
             pUtil.printText ("The credentials of cashier");
+
+            pUtil.printLine(3);
+            pUtil.printAlignment (ALIGN_MODE.ALIGN_CENTER);
+            pUtil.printText (" hello world! ");
             pUtil.printLine ();
+
             pUtil.printAlignment (ALIGN_MODE.ALIGN_LEFT);
             pUtil.printTextBold (false);
             pUtil.printDashLine();
@@ -77,11 +139,6 @@ public class PrintContract {
             pUtil.printLine ();
             pUtil.printDashLine();
             pUtil.printLine ();
-            pUtil.printAlignment (ALIGN_MODE.ALIGN_CENTER);
-            pUtil.printLine ();
-            pUtil.printBarcode ("0262102000123#200831_08135#0", 80, 1);
-            pUtil.printLine ();
-            pUtil.printGoToNextMark ();
             pUtil.printEndNumber ();
         } catch (IOException e) {
             e.printStackTrace ();
@@ -92,7 +149,7 @@ public class PrintContract {
         try {
             pUtil.printState ();
             pUtil.printStartNumber (number);
-            pUtil.printConcentration (Integer.valueOf (con));
+            pUtil.printConcentration (Integer.valueOf (mConnLevel));
             pUtil.printAlignment (ALIGN_MODE.ALIGN_CENTER);
 
             pUtil.printTextBold (true);
@@ -196,6 +253,69 @@ public class PrintContract {
     }
 
 
+    public void printTextTempTest(int number) {
+        Log.e("stvel", "printText----number:" + number +"---con:" + mConnLevel +
+                "---mWidthDouble:" + mWidthDouble +
+                "---mHeightDouble:" + mHeightDouble +
+                "---mTextBold:" + mTextBold +
+                "---mWhiteBlackReverse:" + mWhiteBlackReverse +
+                "---mUnderLine:" + mUnderLine );
+
+        try {
+            pUtil.printState ();
+            pUtil.printStartNumber (number);
+            pUtil.printConcentration (Integer.valueOf (mConnLevel));
+
+            if (!mWidthDouble && !mHeightDouble) {
+                pUtil.printFontSize(MODE_ENLARGE.NORMAL);
+            }else if(mWidthDouble && mHeightDouble){
+                pUtil.printFontSize (MODE_ENLARGE.HEIGHT_WIDTH_DOUBLE);
+            }else if(!mWidthDouble && mHeightDouble){
+                pUtil.printFontSize (MODE_ENLARGE.HEIGHT_DOUBLE);
+            }else {
+                pUtil.printFontSize (MODE_ENLARGE.WIDTH_DOUBLE);
+            }
+
+            if (mTextBold){
+                pUtil.printTextBold (true);
+                pUtil.printDoubleStrike(true);
+            } else{
+                pUtil.printTextBold (false);
+                pUtil.printDoubleStrike(false);
+            }
+
+
+            pUtil.printAlignment (ALIGN_MODE.ALIGN_RIGHT); // 对齐方式
+
+            pUtil.printDoubleStrike(true);
+            if(mLineHeight){
+                pUtil.printLineHeightSet(Integer.valueOf(mLintHeightValue));
+            }
+            if(mUnderLine){
+                pUtil.printUnderLine(UNDERLINE_MODE.UNDERLINE_LARGE); //下划线
+            }else {
+                pUtil.printUnderLine(UNDERLINE_MODE.UNDERLINE_OFF);
+            }
+
+            pUtil.printCharFont(true);
+            if (mWhiteBlackReverse) {
+                pUtil.printWhiteBlackReverse(true);
+            }else {
+                pUtil.printWhiteBlackReverse(false);
+            }
+//            pUtil.printText ("MY test printer");
+
+            pUtil.printText (SystemUtils.LanguageChange (mContext));
+//            pUtil.printText ("MY test printer \nWelcome \nMode of payment \n \n \n -------------------\n \n \n \n ***************");
+
+
+            pUtil.printEndNumber ();
+
+        } catch (IOException e) {
+
+        }
+    }
+
     public void printText(int number, String con) {
         Log.e("stvel", "printText----number:" + number +"---con:" + con);
 
@@ -205,11 +325,24 @@ public class PrintContract {
             pUtil.printConcentration (Integer.valueOf (con));
 
             pUtil.printFontSize (MODE_ENLARGE.NORMAL);
+            //pUtil.printFontSize (MODE_ENLARGE.HEIGHT_WIDTH_DOUBLE);
             pUtil.printTextBold (true); // 是否加粗
-            pUtil.printAlignment (ALIGN_MODE.ALIGN_LEFT); // 对齐方式
+
+//            pUtil.printAlignment (ALIGN_MODE.ALIGN_RIGHT); // 对齐方式
+
+            pUtil.printAlignment (ALIGN_MODE.ALIGN_RIGHT); // 对齐方式
+
+            pUtil.printDoubleStrike(true);
+            pUtil.printUnderLine(UNDERLINE_MODE.UNDERLINE_LARGE); //下划线
+            pUtil.printCharFont(true);
+            pUtil.printWhiteBlackReverse(true);
+//            pUtil.printText ("MY test printer");
+
             pUtil.printText (SystemUtils.LanguageChange (mContext));
+//            pUtil.printText ("MY test printer \nWelcome \nMode of payment \n \n \n -------------------\n \n \n \n ***************");
+
             //pUtil.printText ("150 m³");
-            pUtil.printTextBold (false); // 关闭加粗
+            /*pUtil.printTextBold (false); // 关闭加粗
             pUtil.printFontSize (MODE_ENLARGE.NORMAL); // 字体大小
             pUtil.printLine ();
             pUtil.printDashLine ();
@@ -217,7 +350,7 @@ public class PrintContract {
             pUtil.printAlignment (ALIGN_MODE.ALIGN_CENTER);
             pUtil.printBarcode ("123456", 80, 2);
             pUtil.printQR ("1234456", 200, 200);
-            pUtil.printLine (3);
+            pUtil.printLine (3);*/
             pUtil.printEndNumber ();
 
         } catch (IOException e) {
@@ -225,12 +358,90 @@ public class PrintContract {
         }
     }
 
+    public void printTextRevo(int number, String con) {
+        Log.e("stvel", "printText----number:" + number +"---con:" + con);
+
+        try {
+            pUtil.printState ();
+            pUtil.printStartNumber (number);
+
+            pUtil.printConcentration (Integer.valueOf (con));
+
+            pUtil.printLine();
+            pUtil.printAlignment (ALIGN_MODE.ALIGN_LEFT); //一定要在输出text之前填写才有效果
+            pUtil.printLargeText("stvelzhang");
+
+            pUtil.printUnderLine(UNDERLINE_MODE.UNDERLINE_LARGE);
+            pUtil.printFontSize(MODE_ENLARGE.NORMAL);
+            pUtil.printColor(true);
+            pUtil.printWhiteBlackReverse(true);
+            pUtil.printTextBold(true);
+            pUtil.printDoubleStrike(true);
+            pUtil.printLeftMargin();
+
+            pUtil.printLine();
+            pUtil.printAlignment (ALIGN_MODE.ALIGN_CENTER);
+            pUtil.printText ("MY test printer \nWelcome \nMode of payment \n \n \n -------------------\n \n ");
+
+            pUtil.printLine (3);
+            pUtil.printAlignment (ALIGN_MODE.ALIGN_RIGHT);
+            pUtil.printText (" right right");
+
+            pUtil.printLine(3);
+            pUtil.printEndNumber ();
+
+        } catch (IOException e) {
+
+        }
+    }
+
+    public void printTempTest(){
+        pUtil.selectCommand(PrintUtil.RESET);
+        pUtil.selectCommand(PrintUtil.LINE_SPACING_DEFAULT);
+        pUtil.selectCommand(PrintUtil.ALIGN_CENTER);
+        pUtil.printTextRevo("gourmet restauran\n\n");
+        pUtil.selectCommand(PrintUtil.DOUBLE_HEIGHT_WIDTH);
+        pUtil.printTextRevo("table number: Table 1\n\n");
+        pUtil.selectCommand(PrintUtil.NORMAL);
+        pUtil.selectCommand(PrintUtil.ALIGN_LEFT);
+        pUtil.printTextRevo(PrintUtil.printTwoData("order number", "201507161515\n"));
+        pUtil.printTextRevo(PrintUtil.printTwoData("ordering time", "2016-02-16 10:46\n"));
+        pUtil.printTextRevo(PrintUtil.printTwoData("serving time", "2016-02-16 11:46\n"));
+        pUtil.printTextRevo(PrintUtil.printTwoData("number:2people", "cashier: Zhang San\n"));
+
+        pUtil.printTextRevo("--------------------------------\n");
+        pUtil.selectCommand(PrintUtil.BOLD);
+        pUtil.printTextRevo(PrintUtil.printThreeData("project", "quantity", "amount\n"));
+        pUtil.printTextRevo("--------------------------------\n");
+        pUtil.selectCommand(PrintUtil.BOLD_CANCEL);
+        pUtil.printTextRevo(PrintUtil.printThreeData("miantiao", "1", "0.00\n"));
+        pUtil.printTextRevo(PrintUtil.printThreeData("mifan", "1", "6.00\n"));
+        pUtil.printTextRevo(PrintUtil.printThreeData("kaoji", "1", "26.00\n"));
+        pUtil.printTextRevo(PrintUtil.printThreeData("liucai", "1", "226.00\n"));
+        pUtil.printTextRevo(PrintUtil.printThreeData("niuroumian", "1", "2226.00\n"));
+        pUtil.printTextRevo(PrintUtil.printThreeData("niuroumian", "888", "98886.00\n"));
+
+        pUtil.printTextRevo("--------------------------------\n");
+        pUtil.printTextRevo(PrintUtil.printTwoData("total", "53.50\n"));
+        pUtil.printTextRevo(PrintUtil.printTwoData("erasure", "3.50\n"));
+        pUtil.printTextRevo("--------------------------------\n");
+        pUtil.printTextRevo(PrintUtil.printTwoData("yinshou", "50.00\n"));
+        pUtil.printTextRevo("--------------------------------\n");
+
+        pUtil.selectCommand(PrintUtil.ALIGN_LEFT);
+        pUtil.selectCommand(PrintUtil.BLACKWHITE);
+        pUtil.printTextRevo("beizhu: buyao la,buyao xiangcai");
+        pUtil.printTextRevo("\n\n\n\n\n");
+    }
 
     public void printQR(String text, int number, String con) {
         try {
             pUtil.printState ();
             pUtil.printStartNumber (number);
-            pUtil.printConcentration (Integer.valueOf (con));
+            pUtil.printConcentration (Integer.valueOf (mConnLevel));
+
+            pUtil.printAlignment (ALIGN_MODE.ALIGN_CENTER);
+
             pUtil.printQR (text, 200, 200);
             pUtil.printLine (3);
             pUtil.printEndNumber ();
@@ -242,13 +453,18 @@ public class PrintContract {
 
     public void printBarcode(String text, int number, String con) {
         try {
-            Bitmap bitmap = BitmapUtils.createBarcode (mContext,"JM202009100001001",400,100,true,1);
+            pUtil.printState ();
+            pUtil.printAllState();
+            pUtil.printStartNumber (number);
+            pUtil.printEndNumber ();
+            /*Bitmap bitmap = BitmapUtils.createBarcode (mContext,text,400,100,false,1);
             pUtil.printState ();
             pUtil.printStartNumber (number);
-            pUtil.printConcentration (Integer.valueOf (con));
+            pUtil.printConcentration (Integer.valueOf (mConnLevel));
+            pUtil.printLineHeightOff();
             pUtil.printBarcode2 (bitmap);
             pUtil.printLine (3);
-            pUtil.printEndNumber ();
+            pUtil.printEndNumber ();*/
         } catch (IOException e) {
             e.printStackTrace ();
         }
@@ -257,7 +473,8 @@ public class PrintContract {
     public void printImg(Bitmap bitmap, String con) {
         try {
             pUtil.printState ();
-            pUtil.printConcentration (Integer.valueOf (con));
+            pUtil.printConcentration (Integer.valueOf (mConnLevel));
+            pUtil.printLineHeightSet(30);
             pUtil.printBitmap (bitmap);
             pUtil.printLine (3);
         } catch (IOException e) {

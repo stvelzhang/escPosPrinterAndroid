@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="categoryOne"
+        android:title="@string/stylesetting_info"
+        />
+
+
+    <PreferenceCategory
+        android:title="@string/fontsetting"
+        android:key="hw_double">
+        <SwitchPreference
+            android:key="pre_hdouble"
+            android:title="@string/height_double"
+            android:shadowColor="#F44336"/>
+
+        <SwitchPreference
+            android:key="pre_wdouble"
+            android:title="@string/width_double"
+            android:summary="@string/width_double_info"
+            android:shadowColor="#F44336"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/other"
+        android:key="pre_sec">
+        <SwitchPreference
+            android:key="pre_textbold"
+            android:title="@string/font_bold"
+            android:shadowColor="#F44336"/>
+
+        <SwitchPreference
+            android:key="pre_reverse"
+            android:title="@string/reverse"
+            android:shadowColor="#F44336"/>
+
+        <SwitchPreference
+            android:key="pre_underline"
+            android:title="@string/under_line"
+            android:shadowColor="#F44336"/>
+
+        <SwitchPreference
+            android:key="pre_lineheight"
+            android:title="@string/line_height"
+            android:shadowColor="#F44336"/>
+
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="30"
+            android:inputType="number"
+            android:key="pre_editheight"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/setline_height" />
+    </PreferenceCategory>
+
+
+
+
+
+</PreferenceScreen>

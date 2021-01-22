@@ -51,7 +51,7 @@ public class ESCActivity extends AppCompatActivity implements View.OnClickListen
     private EditText edit_scan;
     private EditText tv_con;
     private ImageView test_img;
-
+    private TextView tv_Nopaper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,7 @@ public class ESCActivity extends AppCompatActivity implements View.OnClickListen
         tv_con=findViewById (R.id.tv_con);
 
         test_img=findViewById (R.id.test_img);
-
+        tv_Nopaper= findViewById(R.id.nopaper);
 
         btn_text.setOnClickListener (this);
         btn_image.setOnClickListener (this);
@@ -98,10 +98,18 @@ public class ESCActivity extends AppCompatActivity implements View.OnClickListen
                             Toast.makeText (ESCActivity.this, getString (R.string.toast_print_success), Toast.LENGTH_SHORT).show ();
                             break;
                         case 1:
+                            Log.e("stvel", "onPrintStatus: no paper" );
+                            tv_Nopaper.setVisibility(View.VISIBLE);
                             Toast.makeText (ESCActivity.this, getString (R.string.toast_no_paper), Toast.LENGTH_SHORT).show ();
                             break;
                         case 2:
+                            Log.e("stvel", "onPrintStatus: error" );
                             Toast.makeText (ESCActivity.this, getString (R.string.toast_print_error), Toast.LENGTH_SHORT).show ();
+                            break;
+                        case 3:
+                            tv_Nopaper.setVisibility(View.GONE);
+                            Log.e("stvel", "onPrintStatus: is reopen" );
+
                             break;
                     }
                 }
@@ -114,6 +122,7 @@ public class ESCActivity extends AppCompatActivity implements View.OnClickListen
                 }
             });
 
+            Log.e("stvel", "onCreate: heheh");
             printContract=new PrintContract (this, pUtil);
             printContract.printInit ();
         } catch (IOException e) {
@@ -135,7 +144,11 @@ public class ESCActivity extends AppCompatActivity implements View.OnClickListen
                     Toast.makeText (this, getString (R.string.toast_con), Toast.LENGTH_SHORT).show ();
                     return;
                 }
-                printContract.printText (number, tv_con.getText ().toString ().trim ());
+//                printContract.printText (number, tv_con.getText ().toString ().trim ());
+//                printContract.printTextRevo (number++, tv_con.getText ().toString ().trim ());
+
+//                printContract.printTempTest();
+                printContract.printTextTempTest(number);
                 break;
             case R.id.btn_image:
                 if (!buttonUtils.isButtonFastClick ()) {
@@ -147,7 +160,8 @@ public class ESCActivity extends AppCompatActivity implements View.OnClickListen
                     Toast.makeText (this, getString (R.string.toast_con), Toast.LENGTH_SHORT).show ();
                     return;
                 }
-                bitmap=BitmapFactory.decodeResource (this.getResources (), R.drawable.icon_test);
+//                bitmap=BitmapFactory.decodeResource (this.getResources (), R.drawable.icon_test);
+                bitmap=BitmapFactory.decodeResource (this.getResources (), R.drawable.image_test);
                 // bitmap=BitmapUtils.convertToBMW (bitmap, bitmap.getWidth (), bitmap.getHeight (), 160);
                 bitmap=BitmapUtils.compressPic (bitmap, 360, 360);
                 printContract.printImg (bitmap, tv_con.getText ().toString ().trim ());
@@ -205,17 +219,17 @@ public class ESCActivity extends AppCompatActivity implements View.OnClickListen
                     Toast.makeText (this, getString (R.string.toast_input_content), Toast.LENGTH_SHORT).show ();
                     return;
                 }
-                if (rb_g.getCheckedRadioButtonId () != R.id.rb_open_mark) {
+                /*if (rb_g.getCheckedRadioButtonId () != R.id.rb_open_mark) {
                     Toast.makeText (this, getString (R.string.toast_mark), Toast.LENGTH_SHORT).show ();
                     return;
-                }
+                }*/
 
                 if (TextUtils.isEmpty (tv_con.getText ().toString ().trim ())) {
                     Toast.makeText (this, getString (R.string.toast_con), Toast.LENGTH_SHORT).show ();
                     return;
                 }
 
-                printContract.printLabel (number, tv_con.getText ().toString ().trim ());
+                printContract.printLabel (number++, tv_con.getText ().toString ().trim ());
                 break;
             case R.id.btn_selfTest:
                 if (!buttonUtils.isButtonFastClick ()) {

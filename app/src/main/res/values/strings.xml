@@ -7,6 +7,11 @@
     <string name="btn_printer">ESC Printer</string>
     <string name="btn_web_printer">Web Printer</string>
 
+    <!--labelname -->
+    <string name="lab_activity_stylesetting">Print style setting</string>
+    <string name="lab_activity_demotest">Print demo test</string>
+    <string name="lab_activity_miansettings">Print Setting</string>
+
     <!-- esc Activity -->
     <string name="TXT_version">Firmware version: </string>
     <string name="TXT_psamInfo">PSAM information: </string>
@@ -83,5 +88,53 @@
     <string name="dialog_02">The Bluetooth device is not turned on, please turn on this function and try again!</string>
     <string name="dialog_03">prompt</string>
     <string name="dialog_04">confirm</string>
+    <string name="stylesetting_info">Setting the final output of the printer will cover the Settings of the App for printing effect</string>
+    <string name="fontsetting">Font</string>
+    <string name="height_double">Font two times high</string>
+    <string name="width_double">Font two times width</string>
+    <string name="width_double_info">Will affect print output layout ,please use caution</string>
+    <string name="other">other</string>
+    <string name="font_bold">Font bold</string>
+    <string name="reverse">White to black</string>
+    <string name="under_line">The underline</string>
+    <string name="line_height">Line height</string>
+    <string name="height_summary">when the line height is less than</string>
+    <string name="setline_height">Set the line height</string>
+    <string name="density_select">Density select</string>
+    <string name="printer_density">Printer Density</string>
+    <string name="demotest_info">Support text image barcode qr label</string>
+    <string name="demo_test_string">test string</string>
+
+    <string-array name="conn_key">
+        <item>70%</item>
+        <item>75%</item>
+        <item>80%</item>
+        <item>85%</item>
+        <item>90%</item>
+        <item>95%</item>
+        <item>100%</item>
+        <item>105%</item>
+        <item>110%</item>
+        <item>115%</item>
+        <item>120%</item>
+        <item>125%</item>
+        <item>130%</item>
+    </string-array>
+    <string-array name="conn_value">
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+        <item>33</item>
+        <item>34</item>
+        <item>35</item>
+        <item>36</item>
+        <item>37</item>
+        <item>38</item>
+        <item>39</item>
+    </string-array>
+
 
 </resources>

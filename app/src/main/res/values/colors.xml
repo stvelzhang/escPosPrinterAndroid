@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#716B6D</color>
 
 
     <!-- 保存背景 -->
@@ -25,4 +25,7 @@
 
     <color name="textColorSecondary">#999999</color>
     <color name="textColorPrimary">#333333</color>
+
+    <color name="no_paper_check_bg">#03A9F4</color>
+    <color name="no_paper_check_text">#BF4B42</color>
 </resources>

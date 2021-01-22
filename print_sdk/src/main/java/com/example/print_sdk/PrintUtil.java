@@ -1,14 +1,17 @@
 package com.example.print_sdk;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothSocket;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.print_sdk.enums.ALIGN_MODE;
 import com.example.print_sdk.enums.BARCODE_1D_TYPE;
 import com.example.print_sdk.enums.MODE_ENLARGE;
+import com.example.print_sdk.enums.UNDERLINE_MODE;
 import com.example.print_sdk.util.BitmapToByteUtils;
 import com.example.print_sdk.util.BitmapUtils;
 import com.example.print_sdk.util.ByteUtils;
@@ -18,6 +21,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.print_sdk.SerialManager.Bytes2HexString;
 
 /**
  * 打印工具类
@@ -25,9 +32,9 @@ import java.io.UnsupportedEncodingException;
 public class PrintUtil implements SerialManager.OnDataReceiveListener {
 
     private static final String TAG=PrintUtil.class.getName ();
-    private OutputStreamWriter mWriter=null;
-    private OutputStream mOutputStream=null;
-    private InputStream mInputStream=null;
+    private static OutputStreamWriter mWriter=null;
+    private static OutputStream mOutputStream=null;
+    private static InputStream mInputStream=null;
     public final static int WIDTH_PIXEL=384;
     private OnPrintEventListener mListener=null;
 
@@ -39,6 +46,40 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
     public boolean check_paper=true;
 
     private Handler mHandler;
+
+
+/***stvelzhang start ***/
+    /**
+     * 打印纸一行最大的字节
+     */
+    private static final int LINE_BYTE_SIZE = 32;
+
+    private static final int LEFT_LENGTH = 20;
+
+    private static final int RIGHT_LENGTH = 12;
+
+    /**
+     * 左侧汉字最多显示几个文字
+     */
+    private static final int LEFT_TEXT_MAX_LENGTH = 8;
+
+    /**
+     * 小票打印菜品的名称，上限调到8个字
+     */
+    public static final int MEAL_NAME_MAX_LENGTH = 8;
+
+    private static OutputStream outputStream = null;
+
+    public static OutputStream getOutputStream() {
+        return outputStream;
+    }
+
+    public static void setOutputStream(OutputStream outputStream) {
+        PrintUtil.outputStream = outputStream;
+    }
+
+
+/**********stvelzhang end *************/
 
     public PrintUtil() {
     }
@@ -54,6 +95,8 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
         SerialManager.getClient ().open ();
         SerialManager.getClient ().setOnDataReceiveListener (this);
         SerialManager.getClient ().startReadThread ();
+//        SerialManager.getClient ().getStatus();//stvelzhang
+//        SerialManager.getClient ().getPrintStatus();//stvelzhang
 
         mWriter=new OutputStreamWriter (SerialManager.getClient ().getOutputStream (), encoding);
         mOutputStream=SerialManager.getClient ().getOutputStream ();
@@ -114,7 +157,20 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
     public void printState() throws IOException {
         mWriter.write (0x1D);
         mWriter.write (0x61);
-        mWriter.write (0x22);
+//        mWriter.write (0x22);// 压轴  切刀移出
+        mWriter.write (0x26);// 压轴  缺纸  切刀移出
+        mWriter.flush ();
+        try {
+            Thread.sleep (100);
+        } catch (InterruptedException e) {
+            e.printStackTrace ();
+        }
+    }
+
+    public void printAllState() throws IOException {
+        mWriter.write (0x10);
+        mWriter.write (0x04);
+        mWriter.write (0x05); //58mm 支持n = 5 打印机全部状态
         mWriter.flush ();
         try {
             Thread.sleep (100);
@@ -228,6 +284,213 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
         print (buffer);
     }
 
+
+    /****************************stvelzhang start ************************************************/
+    /**
+     * 打印文字
+     *
+     * @param text 要打印的文字
+     */
+    public  void printTextRevo(String text) {
+        try {
+            byte[] data = text.getBytes("gbk");
+            mOutputStream.write(data, 0, data.length);
+            mOutputStream.flush();
+        } catch (IOException e) {
+            //Toast.makeText(this.context, "发送失败！", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 设置打印格式
+     *
+     * @param command 格式指令
+     */
+    public  void selectCommand(byte[] command) {
+        try {
+            mOutputStream.write(command);
+            mOutputStream.flush();
+        } catch (IOException e) {
+            //Toast.makeText(this.context, "发送失败！", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 复位打印机
+     */
+    public static final byte[] RESET = {0x1b, 0x40};
+
+    /**
+     * 左对齐
+     */
+    public static final byte[] ALIGN_LEFT = {0x1b, 0x61, 0x00};
+
+    /**
+     * 中间对齐
+     */
+    public static final byte[] ALIGN_CENTER = {0x1b, 0x61, 0x01};
+
+    /**
+     * 右对齐
+     */
+    public static final byte[] ALIGN_RIGHT = {0x1b, 0x61, 0x02};
+
+    /**
+     * 选择加粗模式
+     */
+    public static final byte[] BOLD = {0x1b, 0x45, 0x01};
+
+    /**
+     * 取消加粗模式
+     */
+    public static final byte[] BOLD_CANCEL = {0x1b, 0x45, 0x00};
+
+    /**
+     * 宽高加倍
+     */
+    public static final byte[] DOUBLE_HEIGHT_WIDTH = {0x1d, 0x21, 0x11};
+
+    /**
+     * 宽加倍
+     */
+    public static final byte[] DOUBLE_WIDTH = {0x1d, 0x21, 0x10};
+
+    /**
+     * 高加倍
+     */
+    public static final byte[] DOUBLE_HEIGHT = {0x1d, 0x21, 0x01};
+
+    /**
+     * 字体不放大
+     */
+    public static final byte[] NORMAL = {0x1d, 0x21, 0x00};
+
+    public static final byte[] BLACKWHITE = { 0x1d, 0x42, 0x01 }; //选择黑白反显
+    /**
+     * 设置默认行间距
+     */
+    public static final byte[] LINE_SPACING_DEFAULT = {0x1b, 0x32};
+
+    /**
+     * 设置行间距
+     */
+//	public static final byte[] LINE_SPACING = {0x1b, 0x32};//{0x1b, 0x33, 0x14};  // 20的行间距（0，255）
+
+
+//	final byte[][] byteCommands = {
+//			{ 0x1b, 0x61, 0x00 }, // 左对齐
+//			{ 0x1b, 0x61, 0x01 }, // 中间对齐
+//			{ 0x1b, 0x61, 0x02 }, // 右对齐
+//			{ 0x1b, 0x40 },// 复位打印机
+//			{ 0x1b, 0x4d, 0x00 },// 标准ASCII字体
+//			{ 0x1b, 0x4d, 0x01 },// 压缩ASCII字体
+//			{ 0x1d, 0x21, 0x00 },// 字体不放大
+//			{ 0x1d, 0x21, 0x11 },// 宽高加倍
+//			{ 0x1b, 0x45, 0x00 },// 取消加粗模式
+//			{ 0x1b, 0x45, 0x01 },// 选择加粗模式
+//			{ 0x1b, 0x7b, 0x00 },// 取消倒置打印
+//			{ 0x1b, 0x7b, 0x01 },// 选择倒置打印
+//			{ 0x1d, 0x42, 0x00 },// 取消黑白反显
+//			{ 0x1d, 0x42, 0x01 },// 选择黑白反显
+//			{ 0x1b, 0x56, 0x00 },// 取消顺时针旋转90°
+//			{ 0x1b, 0x56, 0x01 },// 选择顺时针旋转90°
+//	};
+
+    /**
+     * 打印两列
+     *
+     * @param leftText  左侧文字
+     * @param rightText 右侧文字
+     * @return
+     */
+    @SuppressLint("NewApi")
+    public static String printTwoData(String leftText, String rightText) {
+        StringBuilder sb = new StringBuilder();
+        int leftTextLength = getBytesLength(leftText);
+        int rightTextLength = getBytesLength(rightText);
+        sb.append(leftText);
+
+        // 计算两侧文字中间的空格
+        int marginBetweenMiddleAndRight = LINE_BYTE_SIZE - leftTextLength - rightTextLength;
+
+        for (int i = 0; i < marginBetweenMiddleAndRight; i++) {
+            sb.append(" ");
+        }
+        sb.append(rightText);
+        return sb.toString();
+    }
+
+    /**
+     * 打印三列
+     *
+     * @param leftText   左侧文字
+     * @param middleText 中间文字
+     * @param rightText  右侧文字
+     * @return
+     */
+    @SuppressLint("NewApi")
+    public static String printThreeData(String leftText, String middleText, String rightText) {
+        StringBuilder sb = new StringBuilder();
+        // 左边最多显示 LEFT_TEXT_MAX_LENGTH 个汉字 + 两个点
+        if (leftText.length() > LEFT_TEXT_MAX_LENGTH) {
+            leftText = leftText.substring(0, LEFT_TEXT_MAX_LENGTH) + "..";
+        }
+        int leftTextLength = getBytesLength(leftText);
+        int middleTextLength = getBytesLength(middleText);
+        int rightTextLength = getBytesLength(rightText);
+
+        sb.append(leftText);
+        // 计算左侧文字和中间文字的空格长度
+        int marginBetweenLeftAndMiddle = LEFT_LENGTH - leftTextLength - middleTextLength / 2;
+
+        for (int i = 0; i < marginBetweenLeftAndMiddle; i++) {
+            sb.append(" ");
+        }
+        sb.append(middleText);
+
+        // 计算右侧文字和中间文字的空格长度
+        int marginBetweenMiddleAndRight = RIGHT_LENGTH - middleTextLength / 2 - rightTextLength;
+
+        for (int i = 0; i < marginBetweenMiddleAndRight; i++) {
+            sb.append(" ");
+        }
+
+        // 打印的时候发现，最右边的文字总是偏右一个字符，所以需要删除一个空格
+        sb.delete(sb.length() - 1, sb.length()).append(rightText);
+        return sb.toString();
+    }
+
+    /**
+     * 获取数据长度
+     *
+     * @param msg
+     * @return
+     */
+    @SuppressLint("NewApi")
+    private static int getBytesLength(String msg) {
+        return msg.getBytes(Charset.forName("GB2312")).length;
+    }
+
+    /**
+     * 格式化菜品名称，最多显示MEAL_NAME_MAX_LENGTH个数
+     *
+     * @param name
+     * @return
+     */
+    public static String formatMealName(String name) {
+        if (TextUtils.isEmpty(name)) {
+            return name;
+        }
+        if (name.length() > MEAL_NAME_MAX_LENGTH) {
+            return name.substring(0, 8) + "..";
+        }
+        return name;
+    }
+    /**********************************stvelzhang end *********************************************/
+
+
     /**
      * 文本强调模式
      * Text emphasis mode
@@ -240,11 +503,12 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
         }
         mWriter.write (0x1B);
         mWriter.write (0x45);
-        if (bold) {
-            mWriter.write (0x01);
+        /*if (bold) {
+            mWriter.write (0x31);
         } else {
-            mWriter.write (0x00);
-        }
+            mWriter.write (0x30);
+        }*/
+        mWriter.write (0x31);
         mWriter.flush ();
     }
 
@@ -263,6 +527,18 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
         mWriter.write (0x21);
         mWriter.write (mode.Get ());
         mWriter.flush ();
+    }
+
+    public void printCutPaper() throws IOException {
+        mWriter.write (0x1D);
+        mWriter.write (0x56);
+        mWriter.write (0x01);
+        mWriter.flush ();
+        try {
+            Thread.sleep (100);
+        } catch (InterruptedException e) {
+            e.printStackTrace ();
+        }
     }
 
     /**
@@ -387,11 +663,137 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
         if (!check_paper) {
             return;
         }
-        mWriter.write (0x1b);
+        mWriter.write (0x1B);
         mWriter.write (0x61);
         mWriter.write (alignment.Get ());
         mWriter.flush ();
     }
+    public void printLeftMargin() throws IOException {
+        if (!check_paper) {
+            return;
+        }
+        mWriter.write (0x1D);
+        mWriter.write (0x4C);
+        mWriter.write (0x10);
+        mWriter.write (0x01);
+
+        mWriter.flush ();
+    }
+
+
+
+    /**
+     * 下划线0:关，1:开，2：大下划线
+     * Alignment 0: Left alignment, 1: Center, 2: Right alignment
+     */
+    public void printUnderLine(UNDERLINE_MODE underlineMode) throws IOException {
+        if (!check_paper) {
+            return;
+        }
+        mWriter.write (0x1B);
+        mWriter.write (0x2D);
+        mWriter.write (underlineMode.Get ());
+        mWriter.flush ();
+    }
+
+    public void printLineHeightSet(int heightSize) throws IOException {
+        if (!check_paper) {
+            return;
+        }
+        mWriter.write (0x1B);
+        mWriter.write (0x33);
+        mWriter.write (heightSize);
+        mWriter.flush ();
+    }
+
+    public void printLineHeightOff() throws IOException {
+        if (!check_paper) {
+            return;
+        }
+        mWriter.write (0x1B);
+        mWriter.write (0x32);
+        mWriter.flush ();
+    }
+
+    public void printColor(boolean isblack) throws IOException {
+        if (!check_paper) {
+            return;
+        }
+        mWriter.write (0x1B);
+        mWriter.write (0x72);
+        if (!isblack) {
+            mWriter.write (0x01);
+        } else {
+            mWriter.write (0x00);
+        }
+        mWriter.flush ();
+    }
+
+
+    /**
+     * 反白 0:取消字符反白打印，1:设置字符反白打印
+     * • When the LSB of n is 0, white/black reverse mode is turned off.
+     * • When the LSB of n is 1, white/black reverse mode is turned on
+     */
+    public void printWhiteBlackReverse(boolean reverse) throws IOException {
+        if (!check_paper) {
+            return;
+        }
+        mWriter.write (0x1D);
+        mWriter.write (0x42);
+        if (reverse) {
+            mWriter.write (0x31);
+        } else {
+            mWriter.write (0x30);
+        }
+        mWriter.flush ();
+    }
+
+    /**
+     * 重叠 0：取消重叠，1:设置重叠
+     * Turns double-strike mode on or off.
+     * • When the LSB of n is 0, double-strike mode is turned off.
+     * • When the LSB of n is 1, double-strike mode is turned on.
+     */
+    public void printDoubleStrike(boolean double_strike) throws IOException {
+        if (!check_paper) {
+            return;
+        }
+        mWriter.write (0x1B);
+        mWriter.write (0x47);
+
+        if (double_strike) {
+            mWriter.write (0x01);
+        } else {
+            mWriter.write (0x00);
+        }
+
+
+        mWriter.flush ();
+    }
+
+
+    /**
+     * 重叠 0：取消重叠，1:设置重叠
+     * Turns double-strike mode on or off.
+     * • When the LSB of n is 0, double-strike mode is turned off.
+     * • When the LSB of n is 1, double-strike mode is turned on.
+     */
+    public void printCharFont(boolean charfont) throws IOException {
+        if (!check_paper) {
+            return;
+        }
+        mWriter.write (0x1B);
+        mWriter.write (0x47);
+        if (charfont) {
+            mWriter.write (0x01);
+        } else {
+            mWriter.write (0x00);
+        }
+        mWriter.flush ();
+    }
+
+
 
     public void printMarginLeft(int Param) throws IOException {
         if (!check_paper) {
@@ -417,7 +819,9 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
         }
         mWriter.write (0x1b);
         mWriter.write (0x21);
-        mWriter.write (48);
+        //mWriter.write (48);
+        //mWriter.write(0x80);
+        mWriter.write(0x30);
         mWriter.write (text);
         mWriter.write (0x1b);
         mWriter.write (0x21);
@@ -516,6 +920,93 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
         mWriter.flush ();
     }
 
+    /**
+     * printer barcode
+     *
+     * @param text
+     * @param Height
+     * @param Width  1-4
+     * @throws IOException
+     */
+    public void printBarcodeEx(String text, int Height, int Width) throws IOException {
+        if (!check_paper) {
+            return;
+        }
+
+        int dataLen=text.getBytes (mEncoding).length;
+
+        mWriter.write (0x1D);
+        mWriter.write (0x48);
+        mWriter.write (0x01);
+
+        mWriter.write (0x1D);
+        mWriter.write (0x77);
+//        mWriter.write (Width);
+        mWriter.write (0x02);
+
+        mWriter.write (0x1D);
+        mWriter.write (0x68);
+        mWriter.write (Height);
+
+        mWriter.write (0x1D);
+        mWriter.write (0x6B);
+        mWriter.write ((byte) BARCODE_1D_TYPE.CODE128.Get ());
+        mWriter.write (dataLen);
+        mWriter.write (text);
+        mWriter.flush ();
+    }
+
+    public  void  esc_code128_print(String CodeText) throws IOException {
+        int dataLen=0;
+        try {
+            dataLen=CodeText.getBytes ("GB2312").length;
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace ();
+            return ;
+        }
+        mEscBuf=new byte[64];
+        mEscLength=0;
+        mEscBuf[mEscLength++]=0x1D; // GS
+        mEscBuf[mEscLength++]=0x6B; // k
+        mEscBuf[mEscLength++]=(byte) BARCODE_1D_TYPE.CODE128.Get (); // 24;
+        mEscBuf[mEscLength++]=(byte) dataLen;// n
+        //esc_text_print (CodeText + "\n");
+        // mEscBuf[mEscLength++] = 0x00;
+
+        byte[] SourceTextGBK_Bytes=null;
+        try {
+            SourceTextGBK_Bytes=CodeText.getBytes ("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace ();
+        }
+        int SourceGBK_Length=SourceTextGBK_Bytes.length;
+        System.arraycopy (SourceTextGBK_Bytes, 0, mEscBuf, mEscLength, SourceGBK_Length);
+        mEscLength+=SourceGBK_Length;
+
+        byte[] buffer=new byte[mEscLength];
+        System.arraycopy (mEscBuf, 0, buffer, 0, mEscLength);
+
+        print (buffer);
+
+    }
+
+    public synchronized int esc_text_print(String Text) {
+
+        byte[] SourceTextGBK_Bytes=null;
+        try {
+            SourceTextGBK_Bytes=Text.getBytes ("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace ();
+        }
+        int SourceGBK_Length=SourceTextGBK_Bytes.length;
+        System.arraycopy (SourceTextGBK_Bytes, 0, mEscBuf, mEscLength, SourceGBK_Length);
+        mEscLength+=SourceGBK_Length;
+        return mEscLength;
+    }
+
     public void printBarcode2(Bitmap bitmap) throws IOException {
         if (!check_paper) {
             return;
@@ -537,6 +1028,7 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
         if (!check_paper) {
             return;
         }
+        Log.e("stvel", "printQR---mEncoding: " + mEncoding);
         String s_gbk=new String (text.getBytes (), mEncoding);
         Bitmap bitmap=BitmapUtils.encode2dAsBitmap (s_gbk, width, height, 2);
         byte[] bmpByteArray=BitmapToByteUtils.draw2PxPoint (bitmap);
@@ -788,7 +1280,7 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
 
     @Override
     public void onDataReceive(final byte[] buffer, final int size) {
-        Log.d("stel", "onDataReceive: " + buffer + "---size:" + size);
+        Log.d("stvel", "onDataReceive: " + Bytes2HexString(buffer) + "---size:" + size);
         mHandler.post (new Runnable () {
             @Override
             public void run() {
@@ -799,15 +1291,18 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace ();
                     }
-                } else if (buffer[2] == 0x0C) {
+//                } else if (buffer[2] == 0x0C) {
+                } else if ( (size == 7) &&  buffer[6] == 0x04) {//stvelzhang
                     try {
                         Log.e (TAG, "run: no_paper");
+                        Log.e ("stvel", "run: no_paper");
                         check_paper=false;
                         mListener.onPrintStatus (1); // no_paper
                     } catch (Exception e) {
                         e.printStackTrace ();
                     }
-                } else if (buffer[2] == 0x00) {
+//                } else if (buffer[2] == 0x00) {
+                } else if (buffer[6] == 0x00) {
                     check_paper=true;
                 } else if (buffer[1] == 0x40) {
                     try {
@@ -823,6 +1318,8 @@ public class PrintUtil implements SerialManager.OnDataReceiveListener {
                     } catch (Exception e) {
                         e.printStackTrace ();
                     }
+                }else if(size > 7){
+                    mListener.onPrintStatus (3); // remove no paper status
                 }
             }
         });

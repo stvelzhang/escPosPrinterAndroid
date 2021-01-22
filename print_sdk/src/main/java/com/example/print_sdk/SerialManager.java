@@ -123,7 +123,57 @@ public class SerialManager {
     public int getStatus() {
         Log.d("stvel", "getStatus: ");
         int iRet=0;
-        byte[] cmd={0x1D, 0x61, 0x22};
+//        byte[] cmd={0x1D, 0x61, 0x22};
+        byte[] cmd={0x1D, 0x61, 0x26}; //stvelzhang show print allstatus 58mm
+        byte[] buffer=new byte[10];
+        try {
+            mOutputStream.write (cmd);
+            Thread.sleep (10);
+            int loop=10;
+            while (loop-- > 0) {
+                int readBytes=0;
+                if (mInputStream.available () > 0) {
+                    Thread.sleep (10);
+                    readBytes=mInputStream.read (buffer);
+                }
+                if (buffer[0] == 0x73) {
+                    continue;
+                }
+                if (readBytes > 0) {
+//                    if (buffer[2] == 0x0C) {
+                    if (buffer[6] == 0x04) { //stvelzhang
+                        iRet=-2;
+                    }
+                    if (buffer[1] == 0x40) {
+                        iRet=-3;
+                    }
+                    break;
+                }
+                Thread.sleep (5);
+            }
+
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace ();
+            Log.e (TAG, "getStatus: ");
+        } catch (IOException e) {
+            e.printStackTrace ();
+            Log.e (TAG, "getStatus: ");
+        }
+        Log.e (TAG, "onDataReceive: " + Bytes2HexString (buffer));
+        Log.e("stvel", "getStatus---onDataReceive: " + Bytes2HexString (buffer));
+        return iRet;
+    }
+
+/*
+*stvelzhang
+ */
+    public int getPrintStatus() {
+        Log.d("stvel", "SerialManager ----getPrintStatus: ");
+        int iRet=0;
+//        byte[] cmd={0x1D, 0x61, 0x22};
+//        byte[] cmd={0x1D, 0x72, 0x01}; //stvelzhang show print allstatus 58mm
+        byte[] cmd={0x10, 0x04, 0x04}; //stvelzhang show print allstatus 58mm
         byte[] buffer=new byte[10];
         try {
             mOutputStream.write (cmd);
@@ -159,9 +209,11 @@ public class SerialManager {
             Log.e (TAG, "getStatus: ");
         }
         Log.e (TAG, "onDataReceive: " + Bytes2HexString (buffer));
-        Log.e(TAG, "getStatus---onDataReceive: " + Bytes2HexString (buffer));
+        Log.e("stvel", "getPrintStatus---onDataReceive: " + Bytes2HexString (buffer));
         return iRet;
     }
+
+
 
     public static String Bytes2HexString(byte[] b) {
         String ret="";
@@ -244,7 +296,7 @@ public class SerialManager {
                         size=mInputStream.read (buffer);
                         if (null != onDataReceiveListener) {
                             Log.e (TAG, "run: "+buffer);
-                            Log.e ("stvel",  "serialManager----ReadThread----run: "+buffer);
+                            Log.e ("stvel",  "serialManager----ReadThread----run: "+Bytes2HexString(buffer));
                             onDataReceiveListener.onDataReceive (buffer, size);
                         }
                     }

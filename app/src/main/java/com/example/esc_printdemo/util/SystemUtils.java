@@ -46,7 +46,7 @@ public class SystemUtils {
     public static String textEnContent() {
         StringBuilder sb=new StringBuilder ();
 
-        sb.append ("  The credentials of cashier      ");
+        sb.append ("The credentials of cashier");
         sb.append ("\n");
         sb.append ("Time   : ");
         sb.append ("2021-01-15     16:00");

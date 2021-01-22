@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="printer_conn"
+        android:dialogTitle="@string/density_select"
+        android:entries="@array/conn_key"
+        android:entryValues="@array/conn_value"
+        android:title="@string/printer_density" />
+    <Preference
+        android:key="printsetstyle"
+        android:title="@string/lab_activity_stylesetting" />
+    <Preference
+        android:key="print_demo"
+        android:summary="@string/demotest_info"
+        android:title="@string/lab_activity_demotest" />
+
+
+
+</PreferenceScreen>

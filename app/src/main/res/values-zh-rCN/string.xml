@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ESC_PrintDemo</string>
+    <string name="app_name">ESC_PrintSettings</string>
 
     <!-- main Activity -->
     <string name="btn_printer">ESC 打印</string>
     <string name="btn_web_printer">Web 打印</string>
     <string name="btn_buletooth_printer">蓝牙打印</string>
     <string name="btn_psam">PSAM</string>
+
+    <!--labelname -->
+    <string name="lab_activity_stylesetting">打印样式设置</string>
+    <string name="lab_activity_demotest">打印测试样例</string>
+    <string name="lab_activity_miansettings">打印设置</string>
+
+    <string name="demo_test_string">测试字符串</string>
+    <string name="stylesetting_info">设置打印机的最终输出效果，将会覆盖app对打印机效果的设置</string>
+    <string name="fontsetting">字体设置</string>
+    <string name="height_double">字体倍高</string>
+    <string name="width_double">字体倍宽</string>
+    <string name="width_double_info">将会影响打印输出排版，请谨慎启用</string>
+    <string name="other">样式设置</string>
+    <string name="font_bold">字体加粗</string>
+    <string name="reverse">反白</string>
+    <string name="under_line">下划线</string>
+    <string name="line_height">行高</string>
+    <string name="height_summary">当行高小于字符</string>
+    <string name="setline_height">设置行高</string>
+    <string name="density_select">打印浓度选择</string>
+    <string name="printer_density">打印浓度</string>
+    <string name="demotest_info">支持 文本 图片 条形码 二维表 表格</string>
+
 
     <!-- esc Activity -->
     <string name="TXT_version">固件版本: </string>
